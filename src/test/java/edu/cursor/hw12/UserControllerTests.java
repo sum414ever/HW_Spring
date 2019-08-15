@@ -20,16 +20,22 @@ import static org.junit.Assert.assertEquals;
 public class UserControllerTests {
 
     @Test
-    public void getUserTest() {
-        RestTemplate restTemplate = new RestTemplate();
+    public void getUserShouldReturnNewUserByEmail() {
+        //Given
         String url = "http://localhost:8080/user/blabla@gmail.com";
+
+        //When
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<User> userResponse = restTemplate.getForEntity(url, User.class);
+
+        //Then
         assertEquals(HttpStatus.OK, userResponse.getStatusCode());
         assertEquals("blabla@gmail.com", userResponse.getBody().getEmail());
     }
 
     @Test
-    public void addUserTest() {
+    public void addUserShouldReturnHttpStatus() {
+        //Given
         User user = new User();
         user.setName("Michael");
         user.setSurName("Yevtushenko");
@@ -37,15 +43,15 @@ public class UserControllerTests {
         user.setEmail("blabla@gmail.com");
         user.setHomeworkToIsDone(new HashMap<>());
         user.getHomeworkToIsDone().put("MyHomeWork", true);
-
-        RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8080/user";
 
+        //When
+        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<User> requestHttp = new HttpEntity<>(user);
         ResponseEntity<User> responseEntity = restTemplate.postForEntity(url, requestHttp, User.class);
-
         user.setAccessId(Double.toString(Math.random() * 50 + 1));
 
+        //Then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 }

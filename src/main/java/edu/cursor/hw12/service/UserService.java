@@ -1,8 +1,8 @@
 package edu.cursor.hw12.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.cursor.hw12.entities.HttpResponse;
 import edu.cursor.hw12.entities.User;
-import edu.cursor.hw12.handler.UserExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,6 @@ import java.util.HashMap;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserExceptionHandler userExceptionHandler;
 
     public User getUser(String email) {
         User user = new User();
@@ -27,15 +26,10 @@ public class UserService {
         return user;
     }
 
-    public void addUser(User user) {
+    public HttpResponse addUser(User user) throws IOException {
         user.setAccessId(Double.toString(Math.random() * 50 + 1));
 
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
             objectMapper.writeValue(new FileOutputStream("target/user.json"), user);
-            userExceptionHandler.handleUserOk();
-        } catch (IOException e) {
-            userExceptionHandler.handleUserInternalServerError();
-        }
-    }
+    return new HttpResponse("Ok", "Data is saved", false);}
 }
